@@ -1,0 +1,8 @@
+#output {
+  width: 400px;
+  height: 400px;
+}
+#output svg {
+  width: 100%;
+  height: 100%;
+}
