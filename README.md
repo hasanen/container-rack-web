@@ -21,3 +21,9 @@ rustup target add wasm32-unknown-unknown
 ```bash
 trunk serve
 ```
+
+## Build prod
+
+```bash
+trunk build --release
+```
