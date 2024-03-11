@@ -35,7 +35,7 @@ fn App() -> impl IntoView {
         </div>
 
         <Show
-            when=move || { svg.get().len() > 5 }
+            when=move || { svg.get().len() > 0 }
             fallback=|| view! {}
         >
             <DownloadSVG svg=svg.get() filename=filename.get()/>
