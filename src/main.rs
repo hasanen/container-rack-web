@@ -17,6 +17,7 @@ fn App() -> impl IntoView {
 
     view! {
         <div class="container">
+            <h1>{"Box Organizer"}</h1>
             <nav>
                 <a href="https://github.com/hasanen/smartstore-box-organizer-web"><img src="images/github-mark.svg" class="icon" title="GitHub" alt="GitHub"/></a>
             </nav>
