@@ -1,4 +1,3 @@
-use leptos::logging::log;
 use leptos::*;
 use smartstore_box_organizer_generator::generate_svg;
 
@@ -16,6 +15,11 @@ fn App() -> impl IntoView {
     let (svg, set_svg) = create_signal("".to_string());
 
     view! {
+        <div class="container">
+            <nav>
+                <a href="https://github.com/hasanen/smartstore-box-organizer-web"><img src="images/github-mark.svg" class="icon" title="GitHub" alt="GitHub"/></a>
+            </nav>
+        </div>
         <OrganizerInputsForm default_rows=8 default_columns=2 default_material_thickness=4.0
         on_submit_callback=move |inputs: OrganizerInputs| {
             let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, "blue", "black").to_string();
