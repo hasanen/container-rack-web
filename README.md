@@ -16,6 +16,12 @@ cargo install trunk
 rustup target add wasm32-unknown-unknown
 ```
 
+3. Install sass-preprocessor
+
+```bash
+pm install -g sass
+```
+
 ## Dev server
 
 ```bash
