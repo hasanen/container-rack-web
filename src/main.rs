@@ -64,14 +64,17 @@ fn OrganizerInputsForm(
 
     view! {
         <form on:submit=on_submit> // on_submit defined below
+            <label for="rows">Rows:</label>
             <input type="number"
                 value=rows
                 node_ref=input_rows
             />
+            <label for="columns">Columns:</label>
             <input type="number"
                 value=columns
                 node_ref=input_columns
             />
+            <label for="material_thickness">Material Thickness:</label>
             <input type="number"
                 value=material_thickness
                 node_ref=input_material_thickness
