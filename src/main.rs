@@ -13,6 +13,7 @@ struct OrganizerInputs {
 #[component]
 fn App() -> impl IntoView {
     let (svg, set_svg) = create_signal("".to_string());
+    let (filename, set_filename) = create_signal("".to_string());
 
     view! {
         <div class="container">
@@ -25,6 +26,8 @@ fn App() -> impl IntoView {
             let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, "blue", "black").to_string();
             set_svg.update(|n| n.clear());
             set_svg.update(|n| n.push_str(&generated_svg.to_string()));
+            set_filename.update(|n| n.clear());
+            set_filename.update(|n| n.push_str(&format!("box_organizer_{}x{}_{}mm.svg", inputs.rows, inputs.columns, inputs.material_thickness)));
         }
         />
 
@@ -35,16 +38,16 @@ fn App() -> impl IntoView {
             when=move || { svg.get().len() > 5 }
             fallback=|| view! {}
         >
-            <DownloadSVG svg=svg.get() />
+            <DownloadSVG svg=svg.get() filename=filename.get()/>
         </Show>
 
     }
 }
 
 #[component]
-fn DownloadSVG(svg: String) -> impl IntoView {
+fn DownloadSVG(svg: String, filename: String) -> impl IntoView {
     view! {
-        <a href={format!("data:image/svg+xml,{}", svg)} download="output.svg">
+        <a href={format!("data:image/svg+xml,{}", svg)} download=filename>
             <button>{"Download SVG"}</button>
         </a>
     }
