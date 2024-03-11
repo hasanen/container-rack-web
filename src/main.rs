@@ -29,7 +29,24 @@ fn App() -> impl IntoView {
         />
 
         <div id="output" inner_html={svg}>
-            </div>
+        </div>
+
+        <Show
+            when=move || { svg.get().len() > 5 }
+            fallback=|| view! {}
+        >
+            <DownloadSVG svg=svg.get() />
+        </Show>
+
+    }
+}
+
+#[component]
+fn DownloadSVG(svg: String) -> impl IntoView {
+    view! {
+        <a href={format!("data:image/svg+xml,{}", svg)} download="output.svg">
+            <button>{"Download SVG"}</button>
+        </a>
     }
 }
 
