@@ -118,6 +118,7 @@ fn OrganizerInputsForm(
         <div class="mb-3">
             <label for="rows" class="form-label">Rows</label>
             <input type="number"
+                min=1
                 class="form-control"
                 value=rows
                 node_ref=input_rows
@@ -126,7 +127,8 @@ fn OrganizerInputsForm(
             <div class="mb-3">
             <label for="columns" class="form-label">Columns</label>
             <input type="number"
-            class="form-control"
+                class="form-control"
+                min=1
                 value=columns
                 node_ref=input_columns
             />
@@ -135,6 +137,7 @@ fn OrganizerInputsForm(
             <label for="material_thickness" class="form-label">Material Thickness</label>
             <input type="number"
                 class="form-control"
+                min=1
                 value=material_thickness
                 node_ref=input_material_thickness
             />
