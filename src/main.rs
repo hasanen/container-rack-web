@@ -7,6 +7,9 @@ const DEFAULT_COLUMNS: usize = 2;
 const DEFAULT_ROWS: usize = 8;
 const DEFAULT_MATERIAL: f32 = 4.0;
 
+const COLOR_PRIMARY: &str = "blue";
+const COLOR_SECONDARY: &str = "black";
+
 fn main() {
     mount_to_body(App)
 }
@@ -37,7 +40,8 @@ fn App() -> impl IntoView {
 
             <div class="container mt-5">
                 <Routes>
-                    <Route path="/" view=Generator/>
+                    // Use `/*any` until there is another pages and/or domain has been configured with GH pages
+                    <Route path="/*any" view=Generator/>
                 </Routes>
             </div>
             <Footer />
@@ -49,6 +53,7 @@ fn App() -> impl IntoView {
 fn Generator() -> impl IntoView {
     let (svg, set_svg) = create_signal("".to_string());
     let (filename, set_filename) = create_signal("".to_string());
+    let navigate = leptos_router::use_navigate();
     let query = use_query_map().get_untracked();
 
     let rows = query
@@ -69,16 +74,27 @@ fn Generator() -> impl IntoView {
         .parse::<f32>()
         .unwrap_or(DEFAULT_MATERIAL);
 
+    if query.get("rows").is_some()
+        || query.get("columns").is_some()
+        || query.get("material").is_some()
+    {
+        let generated_svg =
+            generate_svg(rows, columns, material, COLOR_PRIMARY, COLOR_SECONDARY).to_string();
+        set_svg.update(|n| n.push_str(&generated_svg.to_string()));
+    }
+
     view! {
             <div class="row">
                 <div class="col-3">
                     <OrganizerInputsForm default_rows=rows default_columns=columns default_material_thickness=material
                     on_submit_callback=move |inputs: OrganizerInputs| {
-                        let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, "blue", "black").to_string();
+                        let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, COLOR_PRIMARY, COLOR_SECONDARY).to_string();
                         set_svg.update(|n| n.clear());
                         set_svg.update(|n| n.push_str(&generated_svg.to_string()));
                         set_filename.update(|n| n.clear());
                         set_filename.update(|n| n.push_str(&format!("box_organizer_{}x{}_{}mm.svg", inputs.rows, inputs.columns, inputs.material_thickness)));
+                        let new_query_params = format!("/?rows={}&columns={}&material={}", inputs.rows, inputs.columns, inputs.material_thickness);
+                        navigate(&new_query_params, NavigateOptions::default());
                     }
                     />
                     <Show
