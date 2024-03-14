@@ -1,9 +1,20 @@
 use chrono::Datelike;
 use leptos::*;
+use leptos_router::*;
 use smartstore_box_organizer_generator::generate_svg;
+
+const DEFAULT_COLUMNS: usize = 2;
+const DEFAULT_ROWS: usize = 8;
+const DEFAULT_MATERIAL: f32 = 4.0;
 
 fn main() {
     mount_to_body(App)
+}
+
+#[derive(Params, PartialEq, Clone, Debug)]
+struct QueryParam {
+    rows: Option<usize>,
+    columns: Option<usize>,
 }
 
 struct OrganizerInputs {
@@ -13,21 +24,55 @@ struct OrganizerInputs {
 }
 #[component]
 fn App() -> impl IntoView {
-    let (svg, set_svg) = create_signal("".to_string());
-    let (filename, set_filename) = create_signal("".to_string());
-
+    _ = console_log::init_with_level(log::Level::Debug);
+    console_error_panic_hook::set_once();
     view! {
+        <Router>
             <nav class="navbar navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand">Box Organizer</a>
+                <div class="container">
+                    <a class="navbar-brand">Box Organizer</a>
 
-            </div>
+                </div>
             </nav>
 
             <div class="container mt-5">
+                <Routes>
+                    <Route path="/" view=Generator/>
+                </Routes>
+            </div>
+            <Footer />
+        </Router>
+    }
+}
+
+#[component]
+fn Generator() -> impl IntoView {
+    let (svg, set_svg) = create_signal("".to_string());
+    let (filename, set_filename) = create_signal("".to_string());
+    let query = use_query_map().get_untracked();
+
+    let rows = query
+        .get("rows")
+        .unwrap_or(&DEFAULT_ROWS.to_string())
+        .parse::<usize>()
+        .unwrap_or(DEFAULT_ROWS);
+
+    let columns = query
+        .get("columns")
+        .unwrap_or(&DEFAULT_COLUMNS.to_string())
+        .parse::<usize>()
+        .unwrap_or(DEFAULT_COLUMNS);
+
+    let material = query
+        .get("material")
+        .unwrap_or(&DEFAULT_MATERIAL.to_string())
+        .parse::<f32>()
+        .unwrap_or(DEFAULT_MATERIAL);
+
+    view! {
             <div class="row">
                 <div class="col-3">
-                    <OrganizerInputsForm default_rows=8 default_columns=2 default_material_thickness=4.0
+                    <OrganizerInputsForm default_rows=rows default_columns=columns default_material_thickness=material
                     on_submit_callback=move |inputs: OrganizerInputs| {
                         let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, "blue", "black").to_string();
                         set_svg.update(|n| n.clear());
@@ -48,10 +93,7 @@ fn App() -> impl IntoView {
                     </div>
                 </div>
             </div>
-
-            <Footer />
-    </div>
-        }
+    }
 }
 
 #[component]
@@ -138,6 +180,7 @@ fn OrganizerInputsForm(
             <input type="number"
                 class="form-control"
                 min=1
+                step=0.1
                 value=material_thickness
                 node_ref=input_material_thickness
             />
