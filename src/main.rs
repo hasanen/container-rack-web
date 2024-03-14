@@ -43,8 +43,8 @@ fn App() -> impl IntoView {
                     // Use `/*any` until there is another pages and/or domain has been configured with GH pages
                     <Route path="/*any" view=Generator/>
                 </Routes>
+                <Footer />
             </div>
-            <Footer />
         </Router>
     }
 }
