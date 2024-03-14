@@ -83,6 +83,9 @@ fn Generator() -> impl IntoView {
         set_svg.update(|n| n.push_str(&generated_svg.to_string()));
     }
 
+    let router = use_router();
+    let current_path = router.pathname().get_untracked();
+
     view! {
             <div class="row">
                 <div class="col-3">
@@ -93,7 +96,8 @@ fn Generator() -> impl IntoView {
                         set_svg.update(|n| n.push_str(&generated_svg.to_string()));
                         set_filename.update(|n| n.clear());
                         set_filename.update(|n| n.push_str(&format!("box_organizer_{}x{}_{}mm.svg", inputs.rows, inputs.columns, inputs.material_thickness)));
-                        let new_query_params = format!("/?rows={}&columns={}&material={}", inputs.rows, inputs.columns, inputs.material_thickness);
+                        let new_query_params = format!("{}?rows={}&columns={}&material={}", current_path, inputs.rows, inputs.columns, inputs.material_thickness);
+                        log::info!("new_query_params: {}", new_query_params);
                         navigate(&new_query_params, NavigateOptions::default());
                     }
                     />
