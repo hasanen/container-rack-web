@@ -36,7 +36,7 @@ jobs:
         id: pages
         uses: actions/configure-pages@v4
       - name: Build with trunk
-        run: trunk build --release
+        run: trunk build --release --public-url /smartstore-box-organizer-web
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
