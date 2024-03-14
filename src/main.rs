@@ -185,6 +185,7 @@ fn OrganizerInputsForm(
                 node_ref=input_material_thickness
             />
             </div>
+
             <button type="submit" class="btn btn-primary">Generate</button>
         </form>
     }
