@@ -1,3 +1,4 @@
+use chrono::Datelike;
 use leptos::*;
 use smartstore_box_organizer_generator::generate_svg;
 
@@ -16,41 +17,66 @@ fn App() -> impl IntoView {
     let (filename, set_filename) = create_signal("".to_string());
 
     view! {
-        <div class="container">
-            <h1>{"Box Organizer"}</h1>
-            <nav>
-                <a href="https://github.com/hasanen/smartstore-box-organizer-web"><img src="images/github-mark.svg" class="icon" title="GitHub" alt="GitHub"/></a>
+            <nav class="navbar navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand">Box Organizer</a>
+
+            </div>
             </nav>
-        </div>
-        <OrganizerInputsForm default_rows=8 default_columns=2 default_material_thickness=4.0
-        on_submit_callback=move |inputs: OrganizerInputs| {
-            let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, "blue", "black").to_string();
-            set_svg.update(|n| n.clear());
-            set_svg.update(|n| n.push_str(&generated_svg.to_string()));
-            set_filename.update(|n| n.clear());
-            set_filename.update(|n| n.push_str(&format!("box_organizer_{}x{}_{}mm.svg", inputs.rows, inputs.columns, inputs.material_thickness)));
+
+            <div class="container mt-5">
+            <div class="row">
+                <div class="col-3">
+                    <OrganizerInputsForm default_rows=8 default_columns=2 default_material_thickness=4.0
+                    on_submit_callback=move |inputs: OrganizerInputs| {
+                        let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, "blue", "black").to_string();
+                        set_svg.update(|n| n.clear());
+                        set_svg.update(|n| n.push_str(&generated_svg.to_string()));
+                        set_filename.update(|n| n.clear());
+                        set_filename.update(|n| n.push_str(&format!("box_organizer_{}x{}_{}mm.svg", inputs.rows, inputs.columns, inputs.material_thickness)));
+                    }
+                    />
+                    <Show
+                        when=move || { svg.get().len() > 0 }
+                        fallback=|| view! {}
+                    >
+                        <DownloadSVG svg=svg.get() filename=filename.get()/>
+                    </Show>
+                </div>
+                <div class="col-9">
+                    <div id="output" inner_html={svg}>
+                    </div>
+                </div>
+            </div>
+
+            <Footer />
+    </div>
         }
-        />
+}
 
-        <div id="output" inner_html={svg}>
+#[component]
+fn Footer() -> impl IntoView {
+    let current_year = chrono::Utc::now().year();
+
+    view! {
+        <div class="footer d-flex justify-content-between py-4 my-4 border-top">
+            <p class="text-muted"> {format!("© {} Joni Hasanen. All rights reserved", current_year)}.</p>
+            <ul class="list-unstyled d-flex">
+                <li class="ms-3"><a class="link-dark" href="https://github.com/hasanen/smartstore-box-organizer-web"><img src="images/github-mark.svg" class="icon" title="GitHub" alt="GitHub"/>Web</a></li>
+                <li class="ms-3"><a class="link-dark" href="https://github.com/hasanen/smartstore-box-organizer-generator"><img src="images/github-mark.svg" class="icon" title="GitHub" alt="GitHub"/>Lib</a></li>
+            </ul>
         </div>
-
-        <Show
-            when=move || { svg.get().len() > 0 }
-            fallback=|| view! {}
-        >
-            <DownloadSVG svg=svg.get() filename=filename.get()/>
-        </Show>
-
     }
 }
 
 #[component]
 fn DownloadSVG(svg: String, filename: String) -> impl IntoView {
     view! {
+        <p class="mt-3">
         <a href={format!("data:image/svg+xml,{}", svg)} download=filename>
-            <button>{"Download SVG"}</button>
+            <button class="btn btn-success">Download</button>
         </a>
+        </p>
     }
 }
 
@@ -89,22 +115,31 @@ fn OrganizerInputsForm(
 
     view! {
         <form on:submit=on_submit> // on_submit defined below
-            <label for="rows">Rows:</label>
+        <div class="mb-3">
+            <label for="rows" class="form-label">Rows</label>
             <input type="number"
+                class="form-control"
                 value=rows
                 node_ref=input_rows
             />
-            <label for="columns">Columns:</label>
+            </div>
+            <div class="mb-3">
+            <label for="columns" class="form-label">Columns</label>
             <input type="number"
+            class="form-control"
                 value=columns
                 node_ref=input_columns
             />
-            <label for="material_thickness">Material Thickness:</label>
+            </div>
+            <div class="mb-3">
+            <label for="material_thickness" class="form-label">Material Thickness</label>
             <input type="number"
+                class="form-control"
                 value=material_thickness
                 node_ref=input_material_thickness
             />
-            <input type="submit" value="Generate SVG!"/>
+            </div>
+            <button type="submit" class="btn btn-primary">Generate</button>
         </form>
     }
 }

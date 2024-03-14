@@ -1,7 +1,5 @@
 
 #output {
-    width: 400px;
-    height: 400px;
     
     svg {
         width: 100%;
@@ -11,4 +9,15 @@
 
 nav .icon {
     width: 2em;
+}
+
+.footer {
+    li {
+        height: 1.5em;
+        display: block;
+    }
+    .icon {
+        height: 1.5em;
+        padding-right: 0.5em;
+    }
 }
