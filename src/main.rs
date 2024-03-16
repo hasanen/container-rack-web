@@ -1,5 +1,5 @@
+use container_rack_web::App;
 use leptos::*;
-use smartstore_box_organizer_web::App;
 
 pub fn main() {
     _ = console_log::init_with_level(log::Level::Debug);

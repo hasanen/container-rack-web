@@ -1,7 +1,7 @@
 use chrono::Datelike;
+use container_rack_lib::generate_svg;
 use leptos::*;
 use leptos_router::*;
-use smartstore_box_organizer_generator::generate_svg;
 
 const DEFAULT_COLUMNS: usize = 2;
 const DEFAULT_ROWS: usize = 8;

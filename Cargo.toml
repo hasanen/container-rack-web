@@ -1,5 +1,5 @@
 [package]
-name = "smartstore-box-organizer-web"
+name = "container-rack-web"
 version = "0.1.0"
 edition = "2021"
 
@@ -17,4 +17,4 @@ console_log = "1.0.0"
 leptos = { version = "0.6.8", features = ["csr"] }
 leptos_router = { version = "0.6.9", features = ["csr"]}
 log = "0.4.21"
-smartstore_box_organizer_generator = { git = "https://github.com/hasanen/smartstore-box-organizer-generator.git" }
+container-rack-lib= { git = "https://github.com/hasanen/container-rack-lib.git" }

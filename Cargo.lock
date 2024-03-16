@@ -210,9 +210,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.5.2"
+version = "4.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b230ab84b0ffdf890d5a10abdbc8b83ae1c4918275daea1ab8801f71536b2651"
+checksum = "949626d00e063efc93b6dca932419ceb5432f99769911c0b995f7e884c778813"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -232,9 +232,9 @@ dependencies = [
 
 [[package]]
 name = "clap_derive"
-version = "4.5.0"
+version = "4.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "307bc0538d5f0f83b8248db3087aa92fe504e4691294d0c96c0eabc33f47ba47"
+checksum = "90239a040c80f5e14809ca132ddc4176ab33d5e17e49691793296e3fcb34d72f"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -311,6 +311,28 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-xid",
+]
+
+[[package]]
+name = "container-rack-lib"
+version = "0.2.0"
+source = "git+https://github.com/hasanen/container-rack-lib.git#ab8aafd096ccf2845902f427225753cab82651e2"
+dependencies = [
+ "clap",
+ "svg",
+]
+
+[[package]]
+name = "container-rack-web"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "console_error_panic_hook",
+ "console_log",
+ "container-rack-lib",
+ "leptos",
+ "leptos_router",
+ "log",
 ]
 
 [[package]]
@@ -578,9 +600,9 @@ checksum = "290f1a1d9242c78d09ce40a5e87e7554ee637af1351968159f4952f028f75604"
 
 [[package]]
 name = "heck"
-version = "0.4.1"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
+checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
 name = "html-escape"
@@ -1381,28 +1403,6 @@ name = "smallvec"
 version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6ecd384b10a64542d77071bd64bd7b231f4ed5940fba55e98c3de13824cf3d7"
-
-[[package]]
-name = "smartstore-box-organizer-web"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "console_error_panic_hook",
- "console_log",
- "leptos",
- "leptos_router",
- "log",
- "smartstore_box_organizer_generator",
-]
-
-[[package]]
-name = "smartstore_box_organizer_generator"
-version = "0.1.1"
-source = "git+https://github.com/hasanen/smartstore-box-organizer-generator.git#6b06f483c39532161f8350735eae1414ffd836b8"
-dependencies = [
- "clap",
- "svg",
-]
 
 [[package]]
 name = "strsim"
