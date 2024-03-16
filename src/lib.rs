@@ -1,4 +1,4 @@
-gstuse container_rack_lib::generate_svg;
+use container_rack_lib::generate_svg;
 use leptos::*;
 use leptos_router::*;
 
