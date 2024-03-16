@@ -27,7 +27,7 @@ pub fn App() -> impl IntoView {
         <Router>
             <nav class="navbar navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand">Box Organizer</a>
+                    <a class="navbar-brand">Container rack</a>
 
                 </div>
             </nav>
