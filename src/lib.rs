@@ -1,5 +1,4 @@
-use chrono::Datelike;
-use container_rack_lib::generate_svg;
+gstuse container_rack_lib::generate_svg;
 use leptos::*;
 use leptos_router::*;
 
@@ -112,11 +111,9 @@ fn Generator() -> impl IntoView {
 
 #[component]
 fn Footer() -> impl IntoView {
-    let current_year = chrono::Utc::now().year();
-
     view! {
         <div class="footer d-flex justify-content-between py-4 my-4 border-top">
-            <p class="text-muted"> {format!("© {} Joni Hasanen. All rights reserved", current_year)}.</p>
+            <p class="text-muted"> {"Created and maintained by Joni Hasanen"}.</p>
             <ul class="list-unstyled d-flex">
                 <li class="ms-3"><a class="link-dark" href="https://github.com/hasanen/smartstore-box-organizer-web"><img src="images/github-mark.svg" class="icon" title="GitHub" alt="GitHub"/>Web</a></li>
                 <li class="ms-3"><a class="link-dark" href="https://github.com/hasanen/smartstore-box-organizer-generator"><img src="images/github-mark.svg" class="icon" title="GitHub" alt="GitHub"/>Lib</a></li>
