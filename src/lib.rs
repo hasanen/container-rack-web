@@ -1,4 +1,6 @@
-use container_rack_lib::generate_svg;
+use std::collections::HashMap;
+
+use container_rack_lib::{generate_svg, supported_containers};
 use leptos::*;
 use leptos_router::*;
 
@@ -19,6 +21,7 @@ struct OrganizerInputs {
     rows: usize,
     columns: usize,
     material_thickness: f32,
+    container: String,
 }
 #[component]
 pub fn App() -> impl IntoView {
@@ -48,6 +51,12 @@ fn Generator() -> impl IntoView {
     let (filename, set_filename) = create_signal("".to_string());
     let navigate = leptos_router::use_navigate();
     let query = use_query_map().get_untracked();
+    let containers = supported_containers();
+    let container_map: HashMap<String, String> = containers
+        .iter()
+        .map(|c| (c.key(), format!("{}: {}", c.vendor, c.model)))
+        .collect();
+    let container = containers.into_iter().next().unwrap();
 
     let rows = query
         .get("rows")
@@ -71,8 +80,15 @@ fn Generator() -> impl IntoView {
         || query.get("columns").is_some()
         || query.get("material").is_some()
     {
-        let generated_svg =
-            generate_svg(rows, columns, material, COLOR_PRIMARY, COLOR_SECONDARY).to_string();
+        let generated_svg = generate_svg(
+            rows,
+            columns,
+            material,
+            &container,
+            COLOR_PRIMARY,
+            COLOR_SECONDARY,
+        )
+        .to_string();
         set_svg.update(|n| n.push_str(&generated_svg.to_string()));
     }
 
@@ -82,9 +98,9 @@ fn Generator() -> impl IntoView {
     view! {
             <div class="row">
                 <div class="col-3">
-                    <OrganizerInputsForm default_rows=rows default_columns=columns default_material_thickness=material
+                    <OrganizerInputsForm default_rows=rows default_columns=columns default_material_thickness=material default_container=container.key().clone() containers=container_map
                     on_submit_callback=move |inputs: OrganizerInputs| {
-                        let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, COLOR_PRIMARY, COLOR_SECONDARY).to_string();
+                        let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, &container, COLOR_PRIMARY, COLOR_SECONDARY).to_string();
                         set_svg.update(|n| n.clear());
                         set_svg.update(|n| n.push_str(&generated_svg.to_string()));
                         set_filename.update(|n| n.clear());
@@ -138,15 +154,19 @@ fn OrganizerInputsForm(
     default_rows: usize,
     default_columns: usize,
     default_material_thickness: f32,
+    default_container: String,
+    containers: HashMap<String, String>,
     #[prop(into)] on_submit_callback: Callback<OrganizerInputs>,
 ) -> impl IntoView {
     let (rows, _set_rows) = create_signal(default_rows);
     let (columns, _set_columns) = create_signal(default_columns);
     let (material_thickness, _set_material_thickness) = create_signal(default_material_thickness);
+    let (selected_container_key, _set_selected_container_key) = create_signal(default_container);
 
     let input_rows: NodeRef<html::Input> = create_node_ref();
     let input_columns: NodeRef<html::Input> = create_node_ref();
     let input_material_thickness: NodeRef<html::Input> = create_node_ref();
+    let input_container_key: NodeRef<html::Input> = create_node_ref();
 
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
         // stop the page from reloading!
@@ -159,10 +179,13 @@ fn OrganizerInputsForm(
         let value_material_thickness =
             parse_value::<f32>(&input_material_thickness, default_material_thickness);
 
+        let value_container_key = input_container_key.get_untracked().unwrap().value();
+
         on_submit_callback.call(OrganizerInputs {
             rows: value_rows,
             columns: value_columns,
             material_thickness: value_material_thickness,
+            container: value_container_key,
         });
     };
 
@@ -195,6 +218,26 @@ fn OrganizerInputsForm(
                 value=material_thickness
                 node_ref=input_material_thickness
             />
+            </div>
+
+            <div class="mb-3">
+                <label for="container_key" class="form-label">Container</label>
+
+                <select on:change=|value| {
+                    log::info!("Selected container: {:?}", value);
+                }>
+
+                        {containers.iter().map(|(key, value)| {
+
+                                <option
+                                    value=key
+                                    selected=selected_container_key || key == default_container
+                                >{value}</option>
+
+
+                    })}
+
+                </select>
             </div>
 
             <button type="submit" class="btn btn-primary">Generate</button>
