@@ -27,3 +27,18 @@ form {
         display: block;
     }
 }
+
+.containers {
+    th.vendor {
+        width: 10%;
+    }
+    th.model {
+        width: 10%;
+    }
+    th.description {
+        width: 50%;
+    }
+    th.links {
+        width: 30%;
+    }
+}

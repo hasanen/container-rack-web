@@ -4,6 +4,9 @@ use container_rack_lib::{generate_svg, supported_containers};
 use leptos::*;
 use leptos_router::*;
 
+mod pages;
+use pages::SupportedContainers;
+
 const DEFAULT_COLUMNS: usize = 2;
 const DEFAULT_ROWS: usize = 8;
 const DEFAULT_MATERIAL: f32 = 4.0;
@@ -27,21 +30,38 @@ struct OrganizerInputs {
 pub fn App() -> impl IntoView {
     view! {
         <Router>
-            <nav class="navbar navbar-dark bg-dark">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
                     <a class="navbar-brand">Container rack</a>
-
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <NavigationItem title="Generator" path="/" />
+                            <NavigationItem title="Supported containers" path="/containers" />
+                        </ul>
+                    </div>
                 </div>
             </nav>
 
             <div class="container mt-5">
                 <Routes>
-                    // Use `/*any` until there is another pages and/or domain has been configured with GH pages
+                    <Route path="/containers" view=SupportedContainers/>
                     <Route path="/*any" view=Generator/>
                 </Routes>
                 <Footer />
             </div>
         </Router>
+    }
+}
+
+#[component]
+pub fn NavigationItem(title: &'static str, path: &'static str) -> impl IntoView {
+    view! {
+        <li class="nav-item">
+            <A class="nav-link" active_class="active" href=path>{title}</A>
+        </li>
     }
 }
 
