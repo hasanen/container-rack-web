@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use container_rack_lib::{generate_svg, supported_containers};
+use container_rack_lib::rack::AssembledDimensions;
 use leptos::*;
 use leptos_router::*;
 
@@ -69,6 +70,7 @@ pub fn NavigationItem(title: &'static str, path: &'static str) -> impl IntoView 
 fn Generator() -> impl IntoView {
     let (svg, set_svg) = create_signal("".to_string());
     let (filename, set_filename) = create_signal("".to_string());
+    let (assembled_dimensions, set_assembled_dimensions) = create_signal(None::<AssembledDimensions>);
     let navigate = leptos_router::use_navigate();
     let query = use_query_map().get_untracked();
     let containers = supported_containers();
@@ -100,15 +102,16 @@ fn Generator() -> impl IntoView {
         || query.get("columns").is_some()
         || query.get("material").is_some()
     {
-        let generated_svg = generate_svg(
+        let generated_document = generate_svg(
             rows,
             columns,
             material,
             &container,
             COLOR_PRIMARY,
             COLOR_SECONDARY,
-        )
-        .to_string();
+        );
+        let generated_svg = generated_document.document.to_string();
+        set_assembled_dimensions.set(Some(generated_document.assembled_dimensions.clone()));         
         set_svg.update(|n| n.push_str(&generated_svg.to_string()));
     }
 
@@ -120,7 +123,9 @@ fn Generator() -> impl IntoView {
                 <div class="col-3">
                     <OrganizerInputsForm default_rows=rows default_columns=columns default_material_thickness=material default_container=container.key().clone() containers=container_map
                     on_submit_callback=move |inputs: OrganizerInputs| {
-                        let generated_svg = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, &container, COLOR_PRIMARY, COLOR_SECONDARY).to_string();
+                        let generated_document = generate_svg(inputs.rows,inputs.columns, inputs.material_thickness, &container, COLOR_PRIMARY, COLOR_SECONDARY);
+                        set_assembled_dimensions.set(Some(generated_document.assembled_dimensions.clone()));
+                        let generated_svg = generated_document.document.to_string();
                         set_svg.update(|n| n.clear());
                         set_svg.update(|n| n.push_str(&generated_svg.to_string()));
                         set_filename.update(|n| n.clear());
@@ -136,6 +141,13 @@ fn Generator() -> impl IntoView {
                     >
                         <DownloadSVG svg=svg.get() filename=filename.get()/>
                     </Show>
+                    <Show
+                        when=move || { assembled_dimensions.get().is_some()}
+                        fallback=|| view! {}
+                    >
+                        <ShowAssembledDimensions dimensions=assembled_dimensions.get().unwrap() />
+                    </Show>
+
                 </div>
                 <div class="col-9">
                     <div id="output" inner_html={svg}>
@@ -166,6 +178,29 @@ fn DownloadSVG(svg: String, filename: String) -> impl IntoView {
             <button class="btn btn-success">Download</button>
         </a>
         </p>
+    }
+}
+#[component]
+fn ShowAssembledDimensions(dimensions: AssembledDimensions) -> impl IntoView {
+    view! {
+        <p>Size of assembled rack:</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Width</th>
+                    <th>Height</th>
+                    <th>Depth</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{ format!("{}mm", dimensions.width)}</td>
+                    <td>{ format!("{}mm", dimensions.height)}</td>
+                    <td>{ format!("{}mm", dimensions.depth)}</td>
+                    
+                </tr>
+            </tbody>
+        </table>
     }
 }
 
