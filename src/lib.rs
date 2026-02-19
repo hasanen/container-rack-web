@@ -183,7 +183,7 @@ fn DownloadSVG(svg: String, filename: String) -> impl IntoView {
 #[component]
 fn ShowAssembledDimensions(dimensions: AssembledDimensions) -> impl IntoView {
     view! {
-        <p>Size of assembled rack:</p>
+        <p>"Final size approx:"</p>
         <table class="table">
             <thead>
                 <tr>
