@@ -1,5 +1,5 @@
 use container_rack_lib::supported_containers;
-use leptos::*;
+use leptos::prelude::*;
 
 #[component]
 pub fn SupportedContainers() -> impl IntoView {

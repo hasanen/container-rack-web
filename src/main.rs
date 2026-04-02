@@ -1,5 +1,6 @@
 use container_rack_web::App;
-use leptos::*;
+use leptos::prelude::*;
+use leptos::mount::mount_to_body;
 
 pub fn main() {
     _ = console_log::init_with_level(log::Level::Debug);

@@ -13,7 +13,7 @@ panic = "abort"
 [dependencies]
 console_error_panic_hook = "0.1.7"
 console_log = "1.0.0"
-leptos = { version = "0.8.17", features = ["csr"] }
-leptos_router = { version = "0.6.9", features = ["csr"]}
+leptos = { version = "0.8.13", features = ["csr"] }
+leptos_router = { version = "0.8.13" }
 log = "0.4.21"
 container-rack-lib = { version = "1.0.0", default-features = false  }

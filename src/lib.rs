@@ -2,8 +2,12 @@ use std::collections::HashMap;
 
 use container_rack_lib::{generate_svg, supported_containers};
 use container_rack_lib::rack::AssembledDimensions;
-use leptos::*;
-use leptos_router::*;
+use leptos::prelude::*;
+use leptos::html;
+use leptos_router::hooks::{use_location, use_navigate, use_query_map};
+use leptos_router::components::{A, Route, Router, Routes};
+use leptos_router::path;
+use leptos_router::NavigateOptions;
 
 mod pages;
 use pages::SupportedContainers;
@@ -14,12 +18,6 @@ const DEFAULT_MATERIAL: f32 = 4.0;
 
 const COLOR_PRIMARY: &str = "blue";
 const COLOR_SECONDARY: &str = "black";
-
-#[derive(Params, PartialEq, Clone, Debug)]
-struct QueryParam {
-    rows: Option<usize>,
-    columns: Option<usize>,
-}
 
 struct OrganizerInputs {
     rows: usize,
@@ -47,9 +45,9 @@ pub fn App() -> impl IntoView {
             </nav>
 
             <div class="container mt-5">
-                <Routes>
-                    <Route path="/containers" view=SupportedContainers/>
-                    <Route path="/*any" view=Generator/>
+                <Routes fallback=|| view! { <p>"Page not found"</p> }>
+                    <Route path=path!("/containers") view=SupportedContainers/>
+                    <Route path=path!("/*any") view=Generator/>
                 </Routes>
                 <Footer />
             </div>
@@ -61,17 +59,17 @@ pub fn App() -> impl IntoView {
 pub fn NavigationItem(title: &'static str, path: &'static str) -> impl IntoView {
     view! {
         <li class="nav-item">
-            <A class="nav-link" active_class="active" href=path>{title}</A>
+            <A attr:class="nav-link" href=path>{title}</A>
         </li>
     }
 }
 
 #[component]
 fn Generator() -> impl IntoView {
-    let (svg, set_svg) = create_signal("".to_string());
-    let (filename, set_filename) = create_signal("".to_string());
-    let (assembled_dimensions, set_assembled_dimensions) = create_signal(None::<AssembledDimensions>);
-    let navigate = leptos_router::use_navigate();
+    let (svg, set_svg) = signal("".to_string());
+    let (filename, set_filename) = signal("".to_string());
+    let (assembled_dimensions, set_assembled_dimensions) = signal(None::<AssembledDimensions>);
+    let navigate = use_navigate();
     let query = use_query_map().get_untracked();
     let containers = supported_containers();
     let container_map: HashMap<String, String> = containers
@@ -82,19 +80,19 @@ fn Generator() -> impl IntoView {
 
     let rows = query
         .get("rows")
-        .unwrap_or(&DEFAULT_ROWS.to_string())
+        .unwrap_or(DEFAULT_ROWS.to_string())
         .parse::<usize>()
         .unwrap_or(DEFAULT_ROWS);
 
     let columns = query
         .get("columns")
-        .unwrap_or(&DEFAULT_COLUMNS.to_string())
+        .unwrap_or(DEFAULT_COLUMNS.to_string())
         .parse::<usize>()
         .unwrap_or(DEFAULT_COLUMNS);
 
     let material = query
         .get("material")
-        .unwrap_or(&DEFAULT_MATERIAL.to_string())
+        .unwrap_or(DEFAULT_MATERIAL.to_string())
         .parse::<f32>()
         .unwrap_or(DEFAULT_MATERIAL);
 
@@ -115,8 +113,8 @@ fn Generator() -> impl IntoView {
         set_svg.update(|n| n.push_str(&generated_svg.to_string()));
     }
 
-    let router = use_router();
-    let current_path = router.pathname().get_untracked();
+    let location = use_location();
+    let current_path = location.pathname.get_untracked();
 
     view! {
             <div class="row">
@@ -213,15 +211,15 @@ fn OrganizerInputsForm(
     containers: HashMap<String, String>,
     #[prop(into)] on_submit_callback: Callback<OrganizerInputs>,
 ) -> impl IntoView {
-    let (rows, _set_rows) = create_signal(default_rows);
-    let (columns, _set_columns) = create_signal(default_columns);
-    let (material_thickness, _set_material_thickness) = create_signal(default_material_thickness);
-    let (selected_container_key, _set_selected_container_key) = create_signal(default_container);
+    let (rows, _set_rows) = signal(default_rows);
+    let (columns, _set_columns) = signal(default_columns);
+    let (material_thickness, _set_material_thickness) = signal(default_material_thickness);
+    let (selected_container_key, _set_selected_container_key) = signal(default_container);
 
-    let input_rows: NodeRef<html::Input> = create_node_ref();
-    let input_columns: NodeRef<html::Input> = create_node_ref();
-    let input_material_thickness: NodeRef<html::Input> = create_node_ref();
-    let input_container_key: NodeRef<html::Select> = create_node_ref();
+    let input_rows: NodeRef<html::Input> = NodeRef::new();
+    let input_columns: NodeRef<html::Input> = NodeRef::new();
+    let input_material_thickness: NodeRef<html::Input> = NodeRef::new();
+    let input_container_key: NodeRef<html::Select> = NodeRef::new();
 
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
         // stop the page from reloading!
@@ -239,7 +237,7 @@ fn OrganizerInputsForm(
             .expect("<input> should be mounted")
             .value();
 
-        on_submit_callback.call(OrganizerInputs {
+        on_submit_callback.run(OrganizerInputs {
             rows: value_rows,
             columns: value_columns,
             material_thickness: value_material_thickness,
@@ -286,10 +284,11 @@ fn OrganizerInputsForm(
                 }>
                         {
                             containers.into_iter().map(|(key, value)| {
+                                let is_selected = key == selected_container_key.get_untracked();
                                 view! {
                                     <option
-                                        value=&key
-                                        selected=key == selected_container_key.get_untracked()
+                                        value=key.clone()
+                                        selected=is_selected
                                     >{value}</option>
                                 }
 
